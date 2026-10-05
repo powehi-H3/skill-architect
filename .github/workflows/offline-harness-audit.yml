@@ -1,0 +1,23 @@
+name: Skill Builder — Offline Harness Audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "benchmarks/fixtures/offline-builder-v0/**"
+      - "scripts/audit_offline_harness.py"
+      - "docs/OFFLINE-HARNESS-AUDIT-V0.md"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Audit fixture and evidence contracts
+        run: python3 scripts/audit_offline_harness.py
