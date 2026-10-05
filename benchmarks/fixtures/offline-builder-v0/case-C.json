@@ -1,1 +1,1 @@
-{"case_id":"C","candidate":"# Offline candidate C\n\n## Quality\nApply explicit quality criteria before declaring completion.","source":"FIXTURE","expected_evidence_state":"OFFLINE-MOCK"}
+{"case_id":"C","attack_class":"quality_gate","candidate":"# Offline candidate C\n\n## Quality\nApply explicit quality criteria before declaring completion.","expected_disposition":"PASS","required_findings":["candidate includes a quality gate","candidate does not equate structure with semantic quality"],"evidence_state":"OFFLINE-MOCK"}
