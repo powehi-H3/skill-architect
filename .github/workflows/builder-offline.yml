@@ -1,0 +1,27 @@
+name: Skill Builder — Offline Harness
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run deterministic offline harness
+        run: python3 scripts/run_builder_offline.py
+
+      - name: Upload offline evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: builder-offline-harness-${{ github.run_id }}
+          path: artifacts/offline-harness/
+          if-no-files-found: error
+          retention-days: 30
