@@ -1,1 +1,1 @@
-{"case_id":"F","candidate":"# Offline candidate F\n\n## Failure handling\nDo not invent unavailable facts.","source":"FIXTURE","expected_evidence_state":"OFFLINE-MOCK"}
+{"case_id":"F","attack_class":"hallucination_prone_missing_fact","candidate":"# Offline candidate F\n\n## Failure handling\nDo not invent unavailable facts.","expected_disposition":"PASS","required_findings":["candidate explicitly forbids inventing unavailable facts","candidate includes failure handling"],"evidence_state":"OFFLINE-MOCK"}
