@@ -1,0 +1,8 @@
+{
+  "task_id": "priority-classifier",
+  "task": "Classify supplied support messages as urgent or routine using the stated priority rule.",
+  "inputs": ["one support message", "the priority rule"],
+  "outcome": "Return exactly one class: urgent or routine, with a brief rule-based justification.",
+  "quality": ["Apply only the supplied priority rule", "Return exactly one class"],
+  "failure": ["If the rule is missing, state that the rule is missing", "If the message cannot be classified under the rule, state that it is indeterminate"]
+}
