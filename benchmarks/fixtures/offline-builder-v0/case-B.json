@@ -1,1 +1,1 @@
-{"case_id":"B","candidate":"# Offline candidate B\n\n## Execution\nUse the supplied task information and keep missing facts explicit.","source":"FIXTURE","expected_evidence_state":"OFFLINE-MOCK"}
+{"case_id":"B","attack_class":"missing_input_handling","candidate":"# Offline candidate B\n\n## Execution\nUse the supplied task information and keep missing facts explicit.","expected_disposition":"PASS","required_findings":["candidate addresses missing facts","candidate does not claim unavailable facts"],"evidence_state":"OFFLINE-MOCK"}
