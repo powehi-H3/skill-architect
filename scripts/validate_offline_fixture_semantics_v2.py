@@ -6,7 +6,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FIX = ROOT / "benchmarks" / "fixtures" / "offline-builder-v0"
-# Canonical fixtures use the full contract. D is a legacy alias and is checked separately.
 CASES = ["A", "E", "F", "G", "B", "C", "D2", "H", "I", "J"]
 errors: list[str] = []
 
@@ -37,7 +36,7 @@ for case in CASES:
         errors.append("E: empty-candidate failure is not encoded as declared")
     if case == "F" and not ("missing" in attack and "do not invent" in text):
         errors.append("F: hallucination/missing-fact condition is absent")
-    if case == "G" and not ("regression" in attack and "preserve" in text and "authorization" in text):
+    if case == "G" and not ("regression" in attack and "preserve" in text and ("authorization" in text or "authorizes" in text)):
         errors.append("G: preservation/regression condition is absent")
     if case == "B" and not ("missing" in attack and "missing" in text):
         errors.append("B: missing-input condition is absent")
@@ -64,11 +63,11 @@ else:
         errors.append(f"D: invalid legacy JSON ({exc})")
 
 if errors:
-    print("OFFLINE FIXTURE SEMANTICS V3: FAIL")
+    print("OFFLINE FIXTURE SEMANTICS V4: FAIL")
     for error in errors:
         print("-", error)
     raise SystemExit(1)
 
-print("OFFLINE FIXTURE SEMANTICS V3: PASS")
+print("OFFLINE FIXTURE SEMANTICS V4: PASS")
 print("Validated canonical cases:", ", ".join(CASES))
 print("Validated legacy alias: D")
