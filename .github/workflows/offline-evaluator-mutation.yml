@@ -1,0 +1,21 @@
+name: Skill Architect — Offline Evaluator Mutation
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/offline_evaluator_v0.py"
+      - "scripts/test_offline_evaluator_v0.py"
+
+permissions:
+  contents: read
+
+jobs:
+  mutation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run evaluator mutation tests
+        working-directory: scripts
+        run: python3 test_offline_evaluator_v0.py
