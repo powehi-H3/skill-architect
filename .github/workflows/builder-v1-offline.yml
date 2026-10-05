@@ -8,6 +8,7 @@ on:
       - 'scripts/build_skill_v1.py'
       - 'scripts/test_builder_v1.py'
       - 'scripts/mutation_test_builder_v1.py'
+      - 'scripts/run_builder_evaluator_v1.py'
       - 'benchmarks/fixtures/builder-v1/**'
       - '.github/workflows/builder-v1-offline.yml'
 
@@ -24,5 +25,7 @@ jobs:
         run: python3 scripts/test_builder_v1.py
       - name: Run Builder V1 mutation tests
         run: python3 scripts/mutation_test_builder_v1.py
+      - name: Run Builder to Evaluator integration
+        run: python3 scripts/run_builder_evaluator_v1.py
       - name: Run existing evaluator safety net
         run: python3 scripts/run_evaluator_suite_v1.py
