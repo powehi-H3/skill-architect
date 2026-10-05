@@ -52,6 +52,12 @@ def main():
     if bad.returncode == 0 or "missing required fields: quality" not in bad.stdout:
         failures.append("missing required field was not rejected")
 
+    unknown = dict(base)
+    unknown["invented"] = "must not be accepted"
+    unknown_result = run(unknown)
+    if unknown_result.returncode == 0 or "unknown fields: invented" not in unknown_result.stdout:
+        failures.append("undeclared field was not rejected")
+
     optional = dict(base)
     optional["dependencies"] = ["none"]
     optional["evidence"] = ["Only supplied temperature is authoritative"]
@@ -66,7 +72,7 @@ def main():
             print("-", f)
         return 1
     print(f"BUILDER V1 CONTRACT: PASS ({len(fixtures)} benchmark fixtures)")
-    print("Deterministic generation, required-field rejection, benchmark coverage, and optional-section discipline verified.")
+    print("Deterministic generation, required-field rejection, undeclared-field rejection, benchmark coverage, and optional-section discipline verified.")
     return 0
 
 
