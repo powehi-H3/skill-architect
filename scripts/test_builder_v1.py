@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Offline contract tests for Skill Builder V1."""
+"""Offline contract and benchmark tests for Skill Builder V1."""
 from __future__ import annotations
-import json, subprocess, sys, tempfile
+import json, subprocess, tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILDER = ROOT / "scripts/build_skill_v1.py"
-FIXTURE = ROOT / "benchmarks/fixtures/builder-v1/case-celsius.json"
+FIXTURE_DIR = ROOT / "benchmarks/fixtures/builder-v1"
 
 
 def run(inp):
@@ -17,20 +17,31 @@ def run(inp):
 
 
 def main():
-    base = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    fixtures = sorted(FIXTURE_DIR.glob("case-*.json"))
     failures = []
-    ok = run(base)
-    if ok.returncode != 0:
-        failures.append("valid fixture rejected")
-    else:
-        text = ok.stdout
-        for needle in ("## Purpose / Boundary", "## Inputs", "## Procedure", "## Outcome", "## Quality Conditions", "## Failure / Uncertainty", "Evidence state: OFFLINE-MOCK"):
-            if needle not in text:
-                failures.append(f"missing output contract section: {needle}")
-        for forbidden in ("## Dependencies", "## Evidence Rules", "## Constraints"):
-            if forbidden in text:
-                failures.append(f"optional section invented: {forbidden}")
+    if len(fixtures) < 5:
+        failures.append(f"expected at least 5 benchmark fixtures, found {len(fixtures)}")
 
+    required_sections = (
+        "## Purpose / Boundary", "## Inputs", "## Procedure", "## Outcome",
+        "## Quality Conditions", "## Failure / Uncertainty", "Evidence state: OFFLINE-MOCK"
+    )
+    optional_sections = ("## Dependencies", "## Evidence Rules", "## Constraints")
+
+    for fixture in fixtures:
+        base = json.loads(fixture.read_text(encoding="utf-8"))
+        ok = run(base)
+        if ok.returncode != 0:
+            failures.append(f"{fixture.name}: valid fixture rejected")
+            continue
+        for needle in required_sections:
+            if needle not in ok.stdout:
+                failures.append(f"{fixture.name}: missing output contract section: {needle}")
+        for forbidden in optional_sections:
+            if forbidden in ok.stdout and forbidden.split("## ")[1].lower() not in base:
+                failures.append(f"{fixture.name}: optional section invented: {forbidden}")
+
+    base = json.loads((FIXTURE_DIR / "case-celsius.json").read_text(encoding="utf-8"))
     malformed = dict(base)
     malformed.pop("quality")
     bad = run(malformed)
@@ -42,16 +53,18 @@ def main():
     optional["evidence"] = ["Only supplied temperature is authoritative"]
     optional["constraints"] = ["Do not invent missing temperature"]
     opt = run(optional)
-    if opt.returncode != 0 or "## Dependencies" not in opt.stdout or "## Evidence Rules" not in opt.stdout or "## Constraints" not in opt.stdout:
+    if opt.returncode != 0 or not all(x in opt.stdout for x in optional_sections):
         failures.append("explicit optional sections were not preserved")
 
     if failures:
         print("BUILDER V1 CONTRACT: FAIL")
-        for f in failures: print("-", f)
+        for f in failures:
+            print("-", f)
         return 1
-    print("BUILDER V1 CONTRACT: PASS")
-    print("Deterministic generation, required-field rejection, and optional-section discipline verified.")
+    print(f"BUILDER V1 CONTRACT: PASS ({len(fixtures)} benchmark fixtures)")
+    print("Deterministic generation, required-field rejection, benchmark coverage, and optional-section discipline verified.")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
