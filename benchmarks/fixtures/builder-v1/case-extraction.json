@@ -1,0 +1,8 @@
+{
+  "task_id": "extract-email",
+  "task": "Extract an email address from supplied text when exactly one valid email address is present.",
+  "inputs": ["one text string"],
+  "outcome": "Return the detected email address only.",
+  "quality": ["Return the exact supplied address", "Do not invent an address"],
+  "failure": ["If no valid email is present, state that none was found", "If multiple candidates are present, state that the input is ambiguous"]
+}
