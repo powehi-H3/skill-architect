@@ -46,7 +46,7 @@ if not legacy.exists():
 else:
     try:
         d = json.loads(legacy.read_text(encoding="utf-8"))
-        if d.get("case_id") is not None or d.get("source") != "FIXTURE" or d.get("expected_evidence_state") != "OFFLINE-MOCK":
+        if d.get("case_id") != "D" or d.get("source") != "FIXTURE" or d.get("expected_evidence_state") != "OFFLINE-MOCK":
             errors.append("D: legacy fixture markers are invalid")
     except Exception as exc:
         errors.append(f"D: invalid legacy JSON: {exc}")
