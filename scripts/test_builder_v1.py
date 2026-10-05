@@ -7,6 +7,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 BUILDER = ROOT / "scripts/build_skill_v1.py"
 FIXTURE_DIR = ROOT / "benchmarks/fixtures/builder-v1"
+OPTIONAL_MAP = {
+    "## Dependencies": "dependencies",
+    "## Evidence Rules": "evidence",
+    "## Constraints": "constraints",
+}
 
 
 def run(inp):
@@ -26,7 +31,6 @@ def main():
         "## Purpose / Boundary", "## Inputs", "## Procedure", "## Outcome",
         "## Quality Conditions", "## Failure / Uncertainty", "Evidence state: OFFLINE-MOCK"
     )
-    optional_sections = ("## Dependencies", "## Evidence Rules", "## Constraints")
 
     for fixture in fixtures:
         base = json.loads(fixture.read_text(encoding="utf-8"))
@@ -37,9 +41,9 @@ def main():
         for needle in required_sections:
             if needle not in ok.stdout:
                 failures.append(f"{fixture.name}: missing output contract section: {needle}")
-        for forbidden in optional_sections:
-            if forbidden in ok.stdout and forbidden.split("## ")[1].lower() not in base:
-                failures.append(f"{fixture.name}: optional section invented: {forbidden}")
+        for section, field in OPTIONAL_MAP.items():
+            if section in ok.stdout and field not in base:
+                failures.append(f"{fixture.name}: optional section invented: {section}")
 
     base = json.loads((FIXTURE_DIR / "case-celsius.json").read_text(encoding="utf-8"))
     malformed = dict(base)
@@ -53,7 +57,7 @@ def main():
     optional["evidence"] = ["Only supplied temperature is authoritative"]
     optional["constraints"] = ["Do not invent missing temperature"]
     opt = run(optional)
-    if opt.returncode != 0 or not all(x in opt.stdout for x in optional_sections):
+    if opt.returncode != 0 or not all(x in opt.stdout for x in OPTIONAL_MAP):
         failures.append("explicit optional sections were not preserved")
 
     if failures:
