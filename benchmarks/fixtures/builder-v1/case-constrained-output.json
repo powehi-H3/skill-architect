@@ -1,0 +1,8 @@
+{
+  "task_id": "json-summary",
+  "task": "Summarize supplied text into the requested JSON fields without adding unsupported facts.",
+  "inputs": ["one source text", "the requested JSON field list"],
+  "outcome": "Return valid JSON containing only the requested fields and values supported by the source text.",
+  "quality": ["Return valid JSON", "Include only requested fields", "Do not invent unsupported facts"],
+  "failure": ["If the source text is missing, state that it is missing", "If a requested field is unsupported by the source, mark that field as unavailable"]
+}
