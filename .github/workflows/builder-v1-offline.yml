@@ -1,0 +1,25 @@
+name: Skill Builder V1 — Offline Contract
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'docs/SKILL-BUILDER-V1.md'
+      - 'scripts/build_skill_v1.py'
+      - 'scripts/test_builder_v1.py'
+      - 'benchmarks/fixtures/builder-v1/**'
+      - '.github/workflows/builder-v1-offline.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  builder-v1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Builder V1 contract tests
+        run: python3 scripts/test_builder_v1.py
+      - name: Run existing evaluator safety net
+        run: python3 scripts/run_evaluator_suite_v1.py
