@@ -1,7 +1,7 @@
 # Evaluator / Mutation / CI Evidence Audit — 2026-10-05
 
 ## Scope
-Audit the real evidence chain for the current offline evaluator, mutation test, and GitHub Actions suite. This audit does not claim semantic Skill quality.
+Audit the real evidence chain for the current offline evaluator, mutation test, fixture semantics, and GitHub Actions gates. This audit does not claim semantic Skill quality.
 
 ## Evidence inspected
 
@@ -9,66 +9,65 @@ Audit the real evidence chain for the current offline evaluator, mutation test, 
 - `scripts/evaluate_offline_candidate_v1.py`
 - `scripts/mutation_test_offline_v1.py`
 - `scripts/run_evaluator_suite_v1.py`
+- `scripts/audit_offline_harness_v1.py`
+- `scripts/validate_offline_fixture_semantics_v2.py`
 - `.github/workflows/offline-evaluator-suite-v1.yml`
-- `benchmarks/fixtures/offline-builder-v0/case-{A,D2,E,H,I,J}.json`
-- GitHub Actions run `37298560758` for commit `d8bea1e0a3cc1722ba8fa86644d81a6336943c9f`
-- GitHub Actions run `37298560556` for the mutation workflow
+- `.github/workflows/offline-harness-audit-v1.yml`
+- `.github/workflows/offline-gates-v1.yml`
+- canonical fixtures A/B/C/D2/E/F/G/H/I/J and legacy D
+- GitHub Actions run `37299276049` for commit `23cba510...`
+- GitHub Actions run `37299365320` for the canonical harness audit
+- GitHub Actions run `37299365321` for the legacy-alias audit
+- GitHub Actions run `37299290750` showing the older combined-gates failure
+- GitHub Actions run `37299487136` showing the first repaired fixture-semantics attempt
 
 ## Findings
 
-### 1. Evaluator execution: REAL evidence
-The evaluator suite was actually executed by GitHub Actions. Run `37298560758` checked out commit `d8bea1e0...` and ran `python3 scripts/run_evaluator_suite_v1.py`.
+### 1. Evaluator suite: REAL PASS evidence
+Run `37299276049` checked out commit `23cba5102171618a238b49e491b5a727982cf1fd` and completed successfully.
 
-Observed evaluator results:
-- A: PASS = expected PASS
-- D2: PASS = expected PASS
-- E: FAIL = expected FAIL
-- H: FAIL = expected FAIL
-- I: UNKNOWN = expected UNKNOWN
-- J: FAIL = expected FAIL
-- Mutation V3: PASS; 4 mutations killed
+The suite exercised A, D2, E, H, I, and J and also ran the mutation test. The repaired suite correctly accepts a matching UNKNOWN result without promoting UNKNOWN to PASS.
 
-### 2. CI result: FAILED for a harness bug
-The workflow itself failed with `failed: ["I"]`. The failure was not caused by an evaluator disposition mismatch. The evaluator correctly returned UNKNOWN for I. The suite incorrectly expected the evaluator process to exit 1 for a matching UNKNOWN result.
+### 2. Mutation testing: included in the passing suite
+The mutation test is executed by `run_evaluator_suite_v1.py`. Therefore the successful run above is direct CI evidence that the current four evaluator mutations were rejected.
 
-This is a genuine test-harness defect: the suite conflated "UNKNOWN must not be promoted" with "UNKNOWN must make the process fail".
+An earlier standalone mutation workflow also passed on the same evaluator generation.
 
-### 3. Mutation workflow: REAL evidence and PASS
-Run `37298560556` completed successfully for the same commit. The mutation workflow therefore provides real CI evidence that the four current evaluator mutations are rejected.
+### 3. Canonical harness audit: REAL PASS evidence
+Run `37299365320` completed successfully and executed `audit_offline_harness_v1.py` against the canonical fixture set.
 
-### 4. Offline evaluator limitation
-Case H is currently a weak semantic rule because the evaluator has a case-specific deterministic FAIL branch rather than deriving the disposition entirely from the candidate content. This is acceptable as a fixture-specific contract for the current gate, but it is not yet a general-purpose semantic evaluator.
+Run `37299365321` also completed successfully for the legacy-alias audit workflow.
 
-### 5. Legacy fixture boundary
-`case-D.json` uses an older fixture schema and is not canonical. The audit now treats it as a legacy alias and validates its legacy markers rather than pretending it is a canonical evaluator case.
+### 4. A separate stale/combined CI gate exposed another defect
+Run `37299290750` failed in `validate_offline_fixture_semantics_v2.py` because that older validator still treated legacy D as canonical and had stale semantic assumptions for G and H.
 
-## Repairs made after this audit
+This is important: the failure is evidence of a **real duplicate/stale CI contract**, not an evaluator failure.
 
-1. Fixed `scripts/run_evaluator_suite_v1.py` so a matching UNKNOWN result is accepted while remaining explicitly non-promotable.
-2. Upgraded `scripts/audit_offline_harness_v1.py` to V2:
-   - covers I and J;
-   - explicitly validates the legacy D boundary;
-   - requires PASS, FAIL, and UNKNOWN coverage;
-   - adds semantic sanity checks for I and J.
+### 5. Repairs to the stale gate
+`validate_offline_fixture_semantics_v2.py` has now been upgraded to V4:
+- canonical cases are A/B/C/D2/E/F/G/H/I/J;
+- legacy D is validated separately;
+- H checks the actual phrase `not executed` plus the absence boundary;
+- I and J have explicit semantic checks;
+- G accepts the actual fixture wording `authorizes` as well as `authorization`.
+
+The corresponding combined Offline Gates workflow is currently running for the repair commit `88fdba7c457b941a445e53165f9451cc6122c8f1`; its final result is not yet available at the time of this audit.
+
+## Important evaluator limitation
+Case H remains a fixture-specific deterministic boundary rule rather than a general semantic inference rule. This is acceptable for the current contract gate, but it is not evidence that the evaluator can generally understand arbitrary Skill semantics.
 
 ## Current evidence status
 
 - Evaluator implementation: **IMPLEMENTED**
-- Mutation implementation: **IMPLEMENTED**
-- Mutation CI: **VERIFIED PASS**
-- Evaluator suite CI at audited commit: **VERIFIED FAILURE, defect identified**
-- Evaluator suite after repair: **NOT YET VERIFIED**
+- Evaluator suite: **VERIFIED PASS on commit `23cba510...`**
+- Mutation testing: **VERIFIED PASS as part of that suite**
+- Canonical harness audit: **VERIFIED PASS**
+- Legacy-alias audit: **VERIFIED PASS**
+- Combined Offline Gates after V4 repair: **RUNNING / NOT YET VERIFIED**
 - Real LLM runtime: **BLOCKED by billing status**
 
 ## Gate decision
 
-**DO NOT promote Level 1 yet.**
+**Level 1 is not promoted yet.**
 
-The next required evidence is a fresh GitHub Actions run after commit `23cba510...` / subsequent audit commit. It must show:
-
-1. evaluator suite PASS;
-2. UNKNOWN case remains UNKNOWN without being promoted;
-3. mutation suite PASS;
-4. harness audit V2 PASS.
-
-Only after those are observed should the offline evaluator integrity gate be considered genuinely green.
+The remaining required evidence is the final result of the combined Offline Gates run for `88fdba7...`. If it passes, the offline evidence chain will have a materially stronger closed loop; if it fails, the failure must be repaired before promotion.
