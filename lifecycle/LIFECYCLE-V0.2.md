@@ -6,7 +6,7 @@
 
 ## 1. Purpose
 
-This document defines the lifecycle states of a Skill, permitted transitions, promotion evidence, and conditions for rollback or retirement.
+This document defines lifecycle states, permitted transitions, promotion evidence, and conditions for rollback or retirement.
 
 The lifecycle is evidence-driven. Documentation alone cannot promote a Skill to `STABLE`.
 
@@ -14,8 +14,8 @@ The lifecycle is evidence-driven. Documentation alone cannot promote a Skill to 
 
 ```text
 DRAFT → EXPERIMENTAL → TESTING → REVIEW → REGRESSION → STABLE
-                                      ↑                    │
-                                      └── ITERATE ←────────┘
+                                           ↑                 │
+                                           └── new candidate ─┘
 
 Any active state may move toward DEPRECATED → RETIRED.
 ```
@@ -26,14 +26,9 @@ A transition must be explicit. An AI must not silently treat draft or experiment
 
 The Skill is being designed and its contract or architecture is incomplete or changing.
 
-Allowed activity: define scope, analyze inputs/outputs, gather references, draft procedures, create initial tests.
+Allowed activity: define scope, analyze inputs/outputs, gather references, draft procedures, create initial evaluation cases.
 
-Promotion to `EXPERIMENTAL` requires:
-- identity and trigger boundary;
-- purpose and non-goals;
-- preliminary input/output contracts;
-- initial failure handling;
-- an executable or reviewable Skill artifact.
+Promotion to `EXPERIMENTAL` requires enough definition for the Skill to be meaningfully tried, including its purpose, boundary, expected inputs/outputs, and initial failure handling appropriate to the task.
 
 Draft behavior must not be presented as validated behavior.
 
@@ -41,7 +36,7 @@ Draft behavior must not be presented as validated behavior.
 
 A runnable or otherwise testable Skill exists, but evidence is insufficient for reliability claims.
 
-Required records: version, assumptions, initial test plan, known limitations.
+Required records should include version, assumptions, evaluation plan, and known limitations appropriate to the task.
 
 Promotion to `TESTING` occurs when the Skill is ready for structured evaluation.
 
@@ -49,22 +44,17 @@ Promotion to `TESTING` occurs when the Skill is ready for structured evaluation.
 
 The Skill is under structured evaluation.
 
-Minimum evaluation:
-- Normal test;
-- Edge test;
-- Stress test.
-
-Regression tests are required after meaningful revisions and before stable promotion when applicable.
+The evaluation suite should be appropriate to the Skill's behavior and risk. Common cases include Normal, Edge, Stress, and Regression tests; not every Skill requires identical cases.
 
 Each test result should separate:
 1. observed output;
 2. expected behavior;
-3. pass/fail judgment;
-4. failure classification;
+3. pass/fail or graded judgment;
+4. failure classification where applicable;
 5. suspected root cause;
 6. proposed change.
 
-A failed test does not automatically justify a broad rewrite. Target the smallest demonstrated failure mechanism.
+A failed test does not automatically justify a broad rewrite. Target the smallest justified change when the evidence supports a localized cause.
 
 Promotion to `REVIEW` occurs when sufficient planned evidence exists for a review decision.
 
@@ -72,16 +62,16 @@ Promotion to `REVIEW` occurs when sufficient planned evidence exists for a revie
 
 A reviewer evaluates whether evidence supports the Skill's claims and whether failures are properly handled.
 
-Review checks:
+Review checks should include, as relevant:
 - scope and trigger are usable;
 - requirements are covered;
 - output contract is satisfied;
 - quality criteria are meaningful;
-- failure handling is safe;
+- failure handling is appropriate;
 - test evidence is credible;
 - external knowledge has not been promoted without justification;
-- no duplicated authoritative rule source exists;
-- unresolved critical failures are disclosed.
+- conflicting authoritative definitions are absent;
+- unresolved important failures are disclosed.
 
 Outcomes:
 - `REVIEW → REGRESSION` when ready for compatibility testing;
@@ -90,11 +80,11 @@ Outcomes:
 
 ## 7. REGRESSION
 
-A revised Skill is checked against previously passing behavior and important known failure cases.
+A revised Skill is checked against previously important behavior and known failure cases that should remain fixed.
 
-A fix for one failure must not silently reintroduce a previously fixed failure.
+A fix for one failure should not silently reintroduce a previously fixed failure.
 
-Promotion to `STABLE` requires relevant regression tests to pass, known limitations to be documented, no hidden critical defect, contract compliance, and updated version/status metadata.
+Promotion to `STABLE` requires sufficient relevant regression evidence, documented limitations, contract compliance, and updated version/status metadata.
 
 If regression fails, return to `EXPERIMENTAL` or `TESTING` according to the failure.
 
@@ -107,13 +97,15 @@ The Skill has sufficient evidence for normal use within its declared boundary.
 Stable obligations:
 - preserve the declared contract;
 - maintain version history;
-- retain relevant regression cases;
+- retain relevant evaluation evidence;
 - record meaningful changes;
 - re-enter the lifecycle for material behavior changes.
 
-## 9. ITERATE
+## 9. New candidate from STABLE
 
-`STABLE → ITERATE` is a conceptual maintenance event rather than a required persistent state. A material improvement or defect fix creates a new candidate version that enters `EXPERIMENTAL` while the previous stable version remains recoverable.
+A material improvement or defect fix creates a new candidate version that enters `EXPERIMENTAL` while the previous stable version remains recoverable.
+
+The previous stable version must not be overwritten merely because a candidate exists.
 
 ## 10. DEPRECATED
 
@@ -131,7 +123,7 @@ The Skill is no longer an active execution candidate. Historical metadata and th
 
 The system distinguishes:
 - **Builder:** creates or modifies a candidate;
-- **Tester:** produces test evidence;
+- **Tester:** produces evaluation evidence;
 - **Reviewer:** evaluates evidence and recommends promotion/rejection;
 - **Registry:** records authoritative status;
 - **User/project owner:** may approve high-impact promotion where required.
@@ -144,23 +136,23 @@ A material behavior change creates a new candidate version. The previous stable 
 
 Documentation-only changes may not require a behavioral version bump, but must be recorded when they affect interpretation or execution.
 
-## 14. Minimum promotion gate
+## 14. Promotion gate
 
-Before `STABLE`:
+Before `STABLE`, confirm that the evidence appropriate to this Skill supports:
 
 - [ ] Trigger boundary works.
-- [ ] Input contract works.
-- [ ] Execution procedure is sufficiently reproducible.
-- [ ] Output contract passes.
-- [ ] Quality criteria pass.
-- [ ] Failure handling does not fabricate missing facts.
-- [ ] Normal test passes.
-- [ ] Edge test passes or limitations are explicitly accepted.
-- [ ] Stress test passes or limitations are explicitly accepted.
-- [ ] Relevant regression tests pass.
-- [ ] Known failures are recorded.
+- [ ] Required input handling works.
+- [ ] Execution is sufficiently reproducible for the claimed use.
+- [ ] Output contract is satisfied.
+- [ ] Quality criteria are supported.
+- [ ] Failure handling is appropriate.
+- [ ] Relevant evaluation cases have passed or accepted limitations are recorded.
+- [ ] Relevant regression checks pass after meaningful changes.
+- [ ] Known failures and limitations are recorded.
 - [ ] Version and provenance are recorded.
+
+There is intentionally no universal numeric score or mandatory test count in V0.2. Those rules must be derived from evidence and Skill class rather than copied from a single domain.
 
 ## 15. V0.2 boundary
 
-This is a design baseline, not a fully automated state machine. Exact quantitative thresholds, scoring, quorum rules, and automated promotion are deferred until real Skill test data exists.
+This is a design baseline, not a fully automated state machine. Exact scoring, quorum rules, automated promotion, and class-specific gates are deferred until the system is tested on multiple unrelated Skills.
