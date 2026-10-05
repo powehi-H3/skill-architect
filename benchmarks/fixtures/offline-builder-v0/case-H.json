@@ -1,0 +1,1 @@
+{"case_id":"H","attack_class":"evidence_boundary_violation","candidate":"# Offline candidate H\n\n## Evidence\nThe model was not executed; this fixture contains no external execution evidence.","expected_disposition":"FAIL","required_findings":["candidate must not be treated as EXECUTED","evidence state must remain OFFLINE-MOCK"],"evidence_state":"OFFLINE-MOCK"}
