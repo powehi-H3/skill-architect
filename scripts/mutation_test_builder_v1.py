@@ -14,9 +14,9 @@ MUTATIONS = {
         'REQUIRED = ["task_id", "task", "inputs", "outcome", "quality", "failure"]',
         'REQUIRED = ["task_id", "task", "inputs", "outcome", "failure"]',
     ),
-    "invent-constraints": (
-        'for field, title in (("dependencies", "Dependencies"), ("evidence", "Evidence Rules"), ("constraints", "Constraints")):',
-        'for field, title in (("dependencies", "Dependencies"), ("evidence", "Evidence Rules"), ("constraints", "Constraints"), ("invented", "Constraints")):',
+    "drop-unknown-field-rejection": (
+        '    unknown = sorted(set(spec) - ALLOWED)\n    if unknown:\n        raise ValueError(f"unknown fields: {\', \'.join(unknown)}")\n',
+        '',
     ),
     "drop-offline-evidence": (
         'Evidence state: OFFLINE-MOCK. This candidate has not been externally executed.',
