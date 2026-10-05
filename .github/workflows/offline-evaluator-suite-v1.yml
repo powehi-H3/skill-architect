@@ -1,0 +1,17 @@
+name: Skill Architect — Offline Evaluator Suite V1
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/evaluate_offline_candidate_v1.py'
+      - 'scripts/mutation_test_offline_v1.py'
+      - 'scripts/run_evaluator_suite_v1.py'
+      - 'benchmarks/fixtures/offline-builder-v0/**'
+      - '.github/workflows/offline-evaluator-suite-v1.yml'
+jobs:
+  suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run evaluator suite
+        run: python3 scripts/run_evaluator_suite_v1.py
