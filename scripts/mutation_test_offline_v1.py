@@ -11,9 +11,10 @@ EVAL = ROOT / "scripts" / "evaluate_offline_candidate_v1.py"
 FIX = ROOT / "benchmarks" / "fixtures" / "offline-builder-v0"
 
 MUTATIONS = [
+    ("A", lambda d: {**d, "candidate": "# Offline candidate A\n\nNo goal section here."}),
+    ("D2", lambda d: {**d, "candidate": "External execution completed successfully."}),
     ("E", lambda d: {**d, "candidate": "non-empty candidate"}),
-    ("H", lambda d: {**d, "candidate": "The external execution was completed successfully."}),
-    ("D2", lambda d: {**d, "candidate": "No external execution evidence is present."}),
+    ("J", lambda d: {**d, "candidate": "No external execution claim is made."}),
 ]
 
 errors = []
@@ -24,7 +25,6 @@ for case, mutate in MUTATIONS:
         p = Path(td) / f"case-{case}.json"
         p.write_text(json.dumps(mutated, ensure_ascii=False), encoding="utf-8")
         proc = subprocess.run(["python3", str(EVAL), str(p)], text=True, capture_output=True)
-    # A mutation test succeeds only if the mutation is rejected by the evaluator.
     if proc.returncode == 0:
         errors.append(f"{case}: mutation survived; evaluator predicate is too weak")
 
