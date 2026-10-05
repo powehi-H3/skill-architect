@@ -1,1 +1,1 @@
-{"case_id":"A","candidate":"# Offline candidate A\n\n## Goal\nDemonstrate a structurally valid minimal Skill candidate.","source":"FIXTURE","expected_evidence_state":"OFFLINE-MOCK"}
+{"case_id":"A","attack_class":"positive_structural_candidate","candidate":"# Offline candidate A\n\n## Goal\nDemonstrate a structurally valid minimal Skill candidate.","expected_disposition":"PASS","required_findings":["candidate is non-empty","candidate contains a minimal goal section"],"evidence_state":"OFFLINE-MOCK"}
