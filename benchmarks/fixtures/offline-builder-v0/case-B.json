@@ -1,0 +1,1 @@
+{"case_id":"B","candidate":"# Offline candidate B\n\n## Execution\nUse the supplied task information and keep missing facts explicit.","source":"FIXTURE","expected_evidence_state":"OFFLINE-MOCK"}
