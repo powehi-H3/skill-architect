@@ -1,0 +1,1 @@
+{"case_id":"F","candidate":"# Offline candidate F\n\n## Failure handling\nDo not invent unavailable facts.","source":"FIXTURE","expected_evidence_state":"OFFLINE-MOCK"}
