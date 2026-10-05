@@ -11,19 +11,22 @@ It is not itself a domain Skill. It is the engineering layer used to create and 
 ## 2. Core principles
 
 1. Define the task boundary before writing a Skill.
-2. Separate knowledge, procedure, constraints, output contract, and evaluation criteria.
+2. Separate knowledge, procedure, constraints, output contract, and evaluation criteria where those concerns are meaningfully distinct.
 3. A documented rule is not automatically a validated rule.
-4. Every meaningful Skill revision should be testable and regression-aware.
-5. Prefer the smallest change that fixes a demonstrated failure.
+4. Meaningful Skill revisions should be testable and evaluated for unintended effects.
+5. Prefer the smallest justified change when a localized failure has a localized cause; broader redesign is allowed when evidence shows the architecture itself is inadequate.
 6. External material is evidence/reference, not automatically authoritative project rules.
 7. Experimental behavior must not silently become stable behavior.
-8. A Skill must have explicit failure handling rather than inventing missing information.
-9. Roles and responsibilities must have single ownership; avoid duplicated authority.
+8. A Skill should define how it handles relevant uncertainty and missing information rather than silently inventing facts.
+9. Responsibilities should have clear ownership; avoid multiple conflicting authoritative definitions of the same rule.
 10. Skills should be composable without requiring one giant universal Skill.
+11. Architecture rules must earn their place through general applicability, evidence, or clearly stated design necessity. A rule is not included merely because it was useful in one domain project.
 
 ## 3. Skill lifecycle
 
-Draft → Test → Review → Refactor → Regression Test → Stable → Iterate
+`DRAFT → EXPERIMENTAL → TESTING → REVIEW → REGRESSION → STABLE`
+
+Material changes to a stable Skill create a new candidate version; the prior stable version remains recoverable until the candidate is accepted.
 
 A Skill may remain Experimental when evidence is insufficient for Stable status.
 
@@ -42,13 +45,13 @@ Designs the Skill contract, execution model, dependencies, references, tests, an
 Produces the Skill package from an approved architecture. Builder is not the final quality authority.
 
 ### Tester
-Runs normal, edge, stress, and later regression cases against a Skill.
+Runs the defined evaluation suite against a Skill and records observable evidence.
 
 ### Reviewer
-Evaluates observed failures and determines whether the root cause is scope, trigger, procedure, output contract, quality criteria, failure handling, knowledge, or model variance.
+Evaluates evidence and determines whether the Skill's claims, boundaries, and quality criteria are supported.
 
 ### Refactorer
-Applies the minimum justified change and preserves unaffected behavior.
+Applies justified changes based on requirements or evidence while preserving unaffected behavior where preservation is appropriate.
 
 ### Registry / Orchestrator
 Tracks versions, status, dependencies, capabilities, known limitations, and selects or composes Skills for larger workflows.
@@ -64,36 +67,38 @@ A Skill should define, at minimum:
 - output contract
 - quality criteria
 - failure handling
-- test cases
+- an appropriate test plan
 
-Advanced Skills may additionally define examples, references, scripts, tools, dependencies, evidence, version history, and regression suites.
+The exact contract may vary by Skill type; the architecture must not force irrelevant fields merely for uniformity.
 
-## 6. Testing model
+## 6. Evaluation model
 
-Minimum test classes:
+A Skill's evaluation suite should include test types appropriate to its risk and behavior. Common classes include:
 
-- Normal: expected valid input.
+- Normal: expected valid task.
 - Edge: missing, ambiguous, conflicting, or unusual input.
-- Stress: long, complex, multi-constraint, or adversarial workload.
-- Regression: previously passing cases rerun after a change.
+- Stress: complex, long, multi-constraint, or otherwise demanding input.
+- Regression: previously passing cases rerun after a meaningful change.
 
-A test result should distinguish observed behavior from interpretation and from proposed remediation.
+Not every Skill requires identical tests or identical quantities. The Skill's contract should justify the tests needed to support its claims.
+
+A test result should distinguish observed behavior, expected behavior, judgment, and proposed remediation.
 
 ## 7. Failure model
 
-Initial failure categories:
+Initial cross-domain failure categories include:
 
 - wrong trigger / wrong scope
 - missing or incorrect task interpretation
-- fabricated information under insufficient input
+- unsupported factual claims or fabrication
 - omitted requirements
 - output contract violation
 - quality-criteria violation
 - constraint conflict
 - unnecessary rule expansion / redundancy
 - tool or dependency failure
-- context-length degradation
-- unstable behavior / model variance
+- input/context capacity problems
+- unstable behavior across repeated runs
 
 The taxonomy is intentionally V0 and must evolve from evidence rather than speculation.
 
@@ -103,18 +108,20 @@ For a demonstrated failure:
 
 1. reproduce or document the failure;
 2. identify the smallest plausible root cause;
-3. change one primary mechanism where practical;
-4. rerun the failing test;
-5. run relevant regression tests;
+3. choose the narrowest justified change when practical;
+4. rerun the relevant evaluation;
+5. evaluate relevant prior behavior for regression;
 6. record the change and its evidence.
 
-Do not rewrite a whole Skill merely because one test failed.
+A broad redesign is appropriate when evidence shows that a localized fix would not address the underlying problem.
 
 ## 9. Evidence boundary
 
 Sources may include user workflows, successful outputs, failed outputs, external repositories, documentation, experiments, and expert guidance.
 
-Source material must not be promoted directly into authoritative rules. Promotion requires an explicit decision and, where practical, validation evidence.
+Source material must not be promoted directly into authoritative rules. Promotion requires an explicit design decision and, where practical, validation evidence.
+
+Domain-specific lessons may be retained as case studies without becoming universal architecture rules.
 
 ## 10. Architecture layers
 
@@ -126,8 +133,22 @@ Source material must not be promoted directly into authoritative rules. Promotio
 - Registry: version, status, dependencies, and discoverability.
 - Composition: routing and workflow across multiple Skills.
 
-## 11. Current scope
+These are conceptual responsibilities, not a requirement that every Skill or repository contain seven separate runtime layers.
+
+## 11. Architecture admission rule
+
+Before adding a new core architecture rule, ask:
+
+1. Is the problem cross-domain rather than domain-specific?
+2. Does the rule have independent evidence, clear design necessity, or repeated observations across different Skill types?
+3. Can its benefit or necessity be evaluated?
+4. Is there a simpler existing mechanism that already covers it?
+5. Would removing it create a meaningful capability or reliability loss?
+
+If the answer is unclear, keep the idea as an experiment, case study, or open design question rather than promoting it to a core rule.
+
+## 12. Current scope
 
 V0 defines architecture and contracts only. It does not yet define the final Builder, Reviewer, Tester, or Orchestrator implementations.
 
-Next design work should formalize the Skill Contract, lifecycle state transitions, test schema, failure schema, and evidence/promotion model before creating production Meta-Skills.
+The next design work should formalize test evidence and evaluation records, then validate the architecture against multiple unrelated Skill types before creating production Meta-Skills.
