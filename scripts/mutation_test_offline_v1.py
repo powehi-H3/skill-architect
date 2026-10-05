@@ -10,11 +10,14 @@ ROOT = Path(__file__).resolve().parents[1]
 EVAL = ROOT / "scripts" / "evaluate_offline_candidate_v1.py"
 FIX = ROOT / "benchmarks" / "fixtures" / "offline-builder-v0"
 
+# Each mutation intentionally changes a fixture into a state that should flip
+# its expected disposition. A surviving mutation means the evaluator failed
+# to detect a deliberately injected defect.
 MUTATIONS = [
     ("A", lambda d: {**d, "candidate": "# Offline candidate A\n\nNo goal section here."}),
     ("D2", lambda d: {**d, "candidate": "External execution completed successfully."}),
     ("E", lambda d: {**d, "candidate": "non-empty candidate"}),
-    ("J", lambda d: {**d, "candidate": "No external execution claim is made."}),
+    ("J", lambda d: {**d, "candidate": "The external execution was completed successfully."}),
 ]
 
 errors = []
