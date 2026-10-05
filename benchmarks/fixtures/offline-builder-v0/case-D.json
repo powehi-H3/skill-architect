@@ -1,0 +1,1 @@
+{"case_id":"D","candidate":"# Offline candidate D\n\n## Scope\nDo not claim external execution when only local evidence exists.","source":"FIXTURE","expected_evidence_state":"OFFLINE-MOCK"}
