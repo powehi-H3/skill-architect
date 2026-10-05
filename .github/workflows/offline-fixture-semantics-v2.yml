@@ -1,0 +1,21 @@
+name: Skill Builder — Offline Fixture Semantics V2
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "benchmarks/fixtures/offline-builder-v0/**"
+      - "scripts/validate_offline_fixture_semantics_v2.py"
+
+permissions:
+  contents: read
+
+jobs:
+  semantics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate fixture semantics
+        run: python3 scripts/validate_offline_fixture_semantics_v2.py
