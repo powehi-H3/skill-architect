@@ -1,0 +1,23 @@
+name: Skill Architect — Offline Evaluator Mutation V1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/evaluate_offline_candidate_v1.py'
+      - 'scripts/mutation_test_offline_v1.py'
+      - 'benchmarks/fixtures/offline-builder-v0/**'
+      - '.github/workflows/offline-evaluator-mutation-v1.yml'
+
+jobs:
+  mutation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run deterministic evaluator smoke tests
+        run: |
+          python3 scripts/evaluate_offline_candidate_v1.py benchmarks/fixtures/offline-builder-v0/case-E.json
+          python3 scripts/evaluate_offline_candidate_v1.py benchmarks/fixtures/offline-builder-v0/case-H.json
+          python3 scripts/evaluate_offline_candidate_v1.py benchmarks/fixtures/offline-builder-v0/case-D2.json
+      - name: Run mutation tests
+        run: python3 scripts/mutation_test_offline_v1.py
