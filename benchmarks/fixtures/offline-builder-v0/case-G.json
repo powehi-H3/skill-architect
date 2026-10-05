@@ -1,1 +1,1 @@
-{"case_id":"G","candidate":"# Offline candidate G\n\n## Input\nPreserve explicit existing material unless the task authorizes changes.","source":"FIXTURE","expected_evidence_state":"OFFLINE-MOCK"}
+{"case_id":"G","attack_class":"preservation_regression","candidate":"# Offline candidate G\n\n## Input\nPreserve explicit existing material unless the task authorizes changes.","expected_disposition":"PASS","required_findings":["candidate preserves existing material by default","candidate requires explicit authorization for changes"],"evidence_state":"OFFLINE-MOCK"}
