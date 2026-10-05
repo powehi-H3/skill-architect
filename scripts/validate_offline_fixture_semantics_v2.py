@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
-"""Deterministic semantic sanity gate for offline benchmark fixtures.
-
-This validates that the fixture metadata and its actual candidate text agree.
-It is deliberately conservative: it does not attempt to judge the quality of
-natural language. It only prevents vacuous or mislabeled benchmark cases.
-"""
+"""Deterministic semantic sanity gate for offline benchmark fixtures."""
 from __future__ import annotations
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FIX = ROOT / "benchmarks" / "fixtures" / "offline-builder-v0"
-CASES = ["A", "E", "F", "G", "B", "C", "D", "D2", "H"]
+# Canonical fixtures use the full contract. D is a legacy alias and is checked separately.
+CASES = ["A", "E", "F", "G", "B", "C", "D2", "H", "I", "J"]
 errors: list[str] = []
 
 for case in CASES:
@@ -24,10 +20,12 @@ for case in CASES:
     except Exception as exc:
         errors.append(f"{case}: invalid JSON ({exc})")
         continue
-    text = d.get("candidate", "").lower()
+    text = " ".join(d.get("candidate", "").lower().split())
     attack = d.get("attack_class", "").lower()
     disposition = d.get("expected_disposition")
 
+    if d.get("case_id") != case:
+        errors.append(f"{case}: case_id mismatch")
     if d.get("evidence_state") != "OFFLINE-MOCK":
         errors.append(f"{case}: evidence_state is not OFFLINE-MOCK")
     if disposition not in {"PASS", "FAIL", "UNKNOWN"}:
@@ -45,18 +43,32 @@ for case in CASES:
         errors.append("B: missing-input condition is absent")
     if case == "C" and not ("quality" in attack and "quality" in text):
         errors.append("C: quality-gate condition is absent")
-    if case == "D" and not (disposition == "PASS" and "offline-mock" in d.get("evidence_state", "").lower()):
-        errors.append("D: evidence baseline condition is absent")
     if case == "D2" and not (disposition == "PASS" and "external execution" in text and "do not claim" in text):
         errors.append("D2: evidence-boundary positive condition is absent")
-    if case == "H" and not (disposition == "FAIL" and "not" in text and "executed" not in text):
-        errors.append("H: negative evidence-boundary condition is absent or contaminated")
+    if case == "H" and not (disposition == "FAIL" and "not executed" in text and "external execution evidence" in text):
+        errors.append("H: negative evidence-boundary condition is absent")
+    if case == "I" and not (disposition == "UNKNOWN" and "insufficient" in text):
+        errors.append("I: UNKNOWN propagation condition is absent")
+    if case == "J" and not (disposition == "FAIL" and "external model execution completed" in text):
+        errors.append("J: false external-execution claim is absent")
+
+legacy = FIX / "case-D.json"
+if not legacy.exists():
+    errors.append("D: legacy fixture missing")
+else:
+    try:
+        d = json.loads(legacy.read_text(encoding="utf-8"))
+        if d.get("case_id") != "D" or d.get("source") != "FIXTURE" or d.get("expected_evidence_state") != "OFFLINE-MOCK":
+            errors.append("D: legacy fixture markers invalid")
+    except Exception as exc:
+        errors.append(f"D: invalid legacy JSON ({exc})")
 
 if errors:
-    print("OFFLINE FIXTURE SEMANTICS V2: FAIL")
+    print("OFFLINE FIXTURE SEMANTICS V3: FAIL")
     for error in errors:
         print("-", error)
     raise SystemExit(1)
 
-print("OFFLINE FIXTURE SEMANTICS V2: PASS")
-print("Validated cases:", ", ".join(CASES))
+print("OFFLINE FIXTURE SEMANTICS V3: PASS")
+print("Validated canonical cases:", ", ".join(CASES))
+print("Validated legacy alias: D")
