@@ -10,6 +10,7 @@ from pathlib import Path
 
 REQUIRED = ["task_id", "task", "inputs", "outcome", "quality", "failure"]
 OPTIONAL = ["dependencies", "evidence", "constraints"]
+ALLOWED = set(REQUIRED + OPTIONAL)
 
 
 def as_list(value, field):
@@ -27,6 +28,9 @@ def bullets(items):
 
 
 def build(spec):
+    unknown = sorted(set(spec) - ALLOWED)
+    if unknown:
+        raise ValueError(f"unknown fields: {', '.join(unknown)}")
     missing = [k for k in REQUIRED if k not in spec]
     if missing:
         raise ValueError(f"missing required fields: {', '.join(missing)}")
