@@ -1,0 +1,8 @@
+{
+  "task_id": "celsius-to-fahrenheit",
+  "task": "Convert one user-provided Celsius temperature into Fahrenheit.",
+  "inputs": ["one Celsius temperature"],
+  "outcome": "Return the converted Fahrenheit value and unit.",
+  "quality": ["Use the correct Celsius-to-Fahrenheit conversion", "Return the Fahrenheit unit"],
+  "failure": ["If the temperature is missing, state that it is missing", "If the temperature is not interpretable as a number, state that it is invalid instead of inventing a value"]
+}
