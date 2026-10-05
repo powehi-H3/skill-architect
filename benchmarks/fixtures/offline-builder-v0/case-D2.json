@@ -1,0 +1,1 @@
+{"case_id":"D2","attack_class":"evidence_boundary_violation","candidate":"# Offline candidate D2\n\n## Scope\nDo not claim external execution when only local evidence exists.","expected_disposition":"PASS","required_findings":["candidate explicitly separates local evidence from external execution","candidate does not claim an external run"],"evidence_state":"OFFLINE-MOCK"}
