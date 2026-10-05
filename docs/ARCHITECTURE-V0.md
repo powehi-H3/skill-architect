@@ -1,6 +1,6 @@
 # Skill Architect — Architecture V0
 
-**Status:** DESIGN BASELINE
+**Status:** CORE CANDIDATE — PROVISIONALLY PROMOTED
 
 ## 1. Purpose
 
@@ -11,109 +11,115 @@ It is not itself a domain Skill. It is the engineering layer used to create and 
 ## 2. Core principles
 
 1. Define the task boundary before writing a Skill.
-2. Separate knowledge, procedure, constraints, output contract, and evaluation criteria where those concerns are meaningfully distinct.
-3. A documented rule is not automatically a validated rule.
-4. Meaningful Skill revisions should be testable and evaluated for unintended effects.
-5. Prefer the smallest justified change when a localized failure has a localized cause; broader redesign is allowed when evidence shows the architecture itself is inadequate.
-6. External material is evidence/reference, not automatically authoritative project rules.
-7. Experimental behavior must not silently become stable behavior.
-8. A Skill should define how it handles relevant uncertainty and missing information rather than silently inventing facts.
-9. Responsibilities should have clear ownership; avoid multiple conflicting authoritative definitions of the same rule.
-10. Skills should be composable without requiring one giant universal Skill.
-11. Architecture rules must earn their place through general applicability, evidence, or clearly stated design necessity. A rule is not included merely because it was useful in one domain project.
+2. Specify the Skill's semantic contract, but do not force a universal document template.
+3. Separate knowledge, procedure, constraints, expected results, and evaluation criteria where those concerns are meaningfully distinct.
+4. A documented rule is not automatically a validated rule.
+5. Meaningful Skill revisions should be testable and evaluated for unintended effects.
+6. Prefer the smallest justified change when a localized failure has a localized cause; broader redesign is allowed when evidence shows the architecture itself is inadequate.
+7. External material is evidence/reference, not automatically authoritative project rules.
+8. Experimental behavior must not silently become stable behavior.
+9. A Skill should define how it handles relevant uncertainty and missing information rather than silently inventing facts.
+10. Responsibilities should have clear ownership; avoid multiple conflicting authoritative definitions of the same rule.
+11. Skills should be composable without requiring one giant universal Skill.
+12. Architecture rules must earn their place through general applicability, evidence, or clearly stated design necessity. A rule is not included merely because it was useful in one domain project.
+13. Complexity should be proportional to the Skill's actual behavior, risk, dependencies, and maintenance needs.
 
-## 3. Skill lifecycle
+## 3. Core Skill Contract
+
+A Skill must specify the following semantically, in whatever representation is appropriate for that Skill and host:
+
+### 3.1 Boundary / Purpose
+What the Skill is for, what task or state it is responsible for, and any meaningful activation or scope limits.
+
+### 3.2 Inputs / Required State
+What information, state, context, resources, or capabilities the Skill relies on. This does not imply that the user must provide explicit input fields.
+
+### 3.3 Intended Outcome / Observable Result
+What successful execution is intended to accomplish. For artifact-producing Skills this may be an output; for action or routing Skills it may be a state change, action, or correct dispatch.
+
+### 3.4 Quality / Success Conditions
+What makes the result acceptable, correct, or fit for purpose. The level of detail should be proportional to the task.
+
+### 3.5 Failure / Uncertainty Behavior
+What the Skill should do when information, capability, context, or confidence is insufficient. It must not silently fabricate successful completion.
+
+These are semantic requirements, not mandatory Markdown headings.
+
+## 4. Optional capabilities
+
+The following may be added when justified by the Skill:
+
+- Evidence / provenance
+- Tools / environment / capability requirements
+- Intermediate state or artifacts
+- Routing / composition
+- External references or resources
+- Validation / regression mechanisms
+- Specialized constraints or policies
+
+An optional capability becomes part of a Skill's effective contract when that Skill depends on it. Optional does not mean informal; a dependency that materially affects execution should be specified clearly.
+
+## 5. Lifecycle
 
 `DRAFT → EXPERIMENTAL → TESTING → REVIEW → REGRESSION → STABLE`
 
-Material changes to a stable Skill create a new candidate version; the prior stable version remains recoverable until the candidate is accepted.
+This is a reference lifecycle, not an obligatory bureaucracy for every Skill. The amount of process should scale with complexity, risk, change magnitude, and evidence needs.
 
-A Skill may remain Experimental when evidence is insufficient for Stable status.
-
-## 4. Core system roles
-
-### Analyst
-Determines whether a repeated task is suitable for Skill化 and defines its boundary, inputs, outputs, and recurring failure modes.
-
-### Distiller
-Extracts reusable knowledge, procedures, constraints, examples, evidence, and failure patterns from source material.
-
-### Architect
-Designs the Skill contract, execution model, dependencies, references, tests, and quality criteria before implementation.
-
-### Builder
-Produces the Skill package from an approved architecture. Builder is not the final quality authority.
-
-### Tester
-Runs the defined evaluation suite against a Skill and records observable evidence.
-
-### Reviewer
-Evaluates evidence and determines whether the Skill's claims, boundaries, and quality criteria are supported.
-
-### Refactorer
-Applies justified changes based on requirements or evidence while preserving unaffected behavior where preservation is appropriate.
-
-### Registry / Orchestrator
-Tracks versions, status, dependencies, capabilities, known limitations, and selects or composes Skills for larger workflows.
-
-## 5. Skill contract — preliminary
-
-A Skill should define, at minimum:
-
-- identity and trigger boundary
-- purpose
-- expected inputs
-- execution procedure
-- output contract
-- quality criteria
-- failure handling
-- an appropriate test plan
-
-The exact contract may vary by Skill type; the architecture must not force irrelevant fields merely for uniformity.
+Material changes to a stable Skill should produce a distinguishable candidate version and preserve the recoverability of the prior stable version until the new candidate is accepted.
 
 ## 6. Evaluation model
 
-A Skill's evaluation suite should include test types appropriate to its risk and behavior. Common classes include:
+Evaluation should be designed around the Skill's actual behavior and claims.
 
-- Normal: expected valid task.
-- Edge: missing, ambiguous, conflicting, or unusual input.
-- Stress: complex, long, multi-constraint, or otherwise demanding input.
-- Regression: previously passing cases rerun after a meaningful change.
+Possible evaluation classes include:
 
-Not every Skill requires identical tests or identical quantities. The Skill's contract should justify the tests needed to support its claims.
+- normal expected use;
+- edge or ambiguity cases;
+- demanding/stress cases;
+- previously successful cases rerun after meaningful changes;
+- capability/tool failure cases;
+- domain-specific adversarial or safety cases where relevant.
 
-A test result should distinguish observed behavior, expected behavior, judgment, and proposed remediation.
+No fixed number or universal set of tests is required. The Skill's claims and risk should justify its evaluation coverage.
+
+A useful evaluation record distinguishes, where applicable:
+
+- expected behavior;
+- observed behavior;
+- evidence;
+- judgment;
+- remediation or next experiment.
 
 ## 7. Failure model
 
-Initial cross-domain failure categories include:
+The architecture provides categories as a starting vocabulary, not a permanent universal taxonomy:
 
-- wrong trigger / wrong scope
-- missing or incorrect task interpretation
-- unsupported factual claims or fabrication
-- omitted requirements
-- output contract violation
-- quality-criteria violation
-- constraint conflict
-- unnecessary rule expansion / redundancy
-- tool or dependency failure
-- input/context capacity problems
-- unstable behavior across repeated runs
+- wrong trigger / scope;
+- incorrect task interpretation;
+- unsupported factual claims or fabrication;
+- omitted requirements;
+- expected-result violation;
+- quality/success-condition violation;
+- constraint conflict;
+- unnecessary rule expansion / redundancy;
+- tool or dependency failure;
+- input/context capacity problems;
+- unstable behavior across repeated runs.
 
-The taxonomy is intentionally V0 and must evolve from evidence rather than speculation.
+Skill-specific failure modes may be added when justified.
 
 ## 8. Change discipline
 
-For a demonstrated failure:
+For a demonstrated failure, when practical:
 
 1. reproduce or document the failure;
 2. identify the smallest plausible root cause;
-3. choose the narrowest justified change when practical;
+3. choose the narrowest justified change;
 4. rerun the relevant evaluation;
 5. evaluate relevant prior behavior for regression;
-6. record the change and its evidence.
+6. record the change and evidence.
 
-A broad redesign is appropriate when evidence shows that a localized fix would not address the underlying problem.
+A broader redesign is appropriate when evidence shows that a localized fix would not address the underlying problem.
 
 ## 9. Evidence boundary
 
@@ -123,7 +129,9 @@ Source material must not be promoted directly into authoritative rules. Promotio
 
 Domain-specific lessons may be retained as case studies without becoming universal architecture rules.
 
-## 10. Architecture layers
+## 10. Architecture responsibilities
+
+The architecture distinguishes these responsibilities conceptually:
 
 - Intent: what the user wants.
 - Control: boundaries, priorities, constraints, and change policy.
@@ -133,7 +141,7 @@ Domain-specific lessons may be retained as case studies without becoming univers
 - Registry: version, status, dependencies, and discoverability.
 - Composition: routing and workflow across multiple Skills.
 
-These are conceptual responsibilities, not a requirement that every Skill or repository contain seven separate runtime layers.
+These are conceptual responsibilities. A particular Skill or repository does not need seven separate files, sections, or runtime layers.
 
 ## 11. Architecture admission rule
 
@@ -144,11 +152,23 @@ Before adding a new core architecture rule, ask:
 3. Can its benefit or necessity be evaluated?
 4. Is there a simpler existing mechanism that already covers it?
 5. Would removing it create a meaningful capability or reliability loss?
+6. Does the rule impose complexity disproportionate to the problem it solves?
 
 If the answer is unclear, keep the idea as an experiment, case study, or open design question rather than promoting it to a core rule.
 
-## 12. Current scope
+## 12. Evidence basis for this revision
 
-V0 defines architecture and contracts only. It does not yet define the final Builder, Reviewer, Tester, or Orchestrator implementations.
+This revision is based on:
 
-The next design work should formalize test evidence and evaluation records, then validate the architecture against multiple unrelated Skill types before creating production Meta-Skills.
+- cross-domain conceptual tests covering writing, code review, information synthesis, tool-using work, and multi-step transformation;
+- examination of real Skill artifacts from independent public ecosystems;
+- explicit counterexample/falsification attempts against the candidate core;
+- the finding that semantic requirements generalize better than fixed document structures, universal workflows, or universal test suites.
+
+This evidence is still limited and does not constitute a statistical survey of all Skills. The status is therefore provisionally promoted, not final or immutable.
+
+## 13. Current scope
+
+This version defines the core semantic contract and architectural boundaries. It does not yet define production implementations of Builder, Reviewer, Tester, or Orchestrator.
+
+The next work should test this provisionally promoted core against additional real Skill artifacts and platform-specific Skill specifications, then refine only where new evidence exposes a weakness.
