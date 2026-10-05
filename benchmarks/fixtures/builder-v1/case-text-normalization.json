@@ -1,0 +1,8 @@
+{
+  "task_id": "normalize-whitespace",
+  "task": "Normalize repeated whitespace in supplied plain text without changing the words.",
+  "inputs": ["one plain-text string"],
+  "outcome": "Return the same text with repeated spaces collapsed and surrounding whitespace removed.",
+  "quality": ["Preserve word order", "Do not invent or delete words"],
+  "failure": ["If text is missing, state that it is missing"]
+}
