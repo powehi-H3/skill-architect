@@ -1,1 +1,1 @@
-{"case_id":"E","candidate":"# Offline candidate E\n\n## Goal\nDemonstrate explicit output requirements.","source":"FIXTURE","expected_evidence_state":"OFFLINE-MOCK"}
+{"case_id":"E","attack_class":"empty_candidate","candidate":"","expected_disposition":"FAIL","required_findings":["candidate is empty"],"evidence_state":"OFFLINE-MOCK"}
