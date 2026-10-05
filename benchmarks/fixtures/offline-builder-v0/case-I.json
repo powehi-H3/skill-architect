@@ -1,0 +1,1 @@
+{"case_id":"I","attack_class":"evaluator_unknown_propagation","candidate":"# Candidate I\n\nThe evidence is insufficient to establish whether the requested behavior was executed.","expected_disposition":"UNKNOWN","required_findings":["must preserve UNKNOWN rather than promote to PASS"],"evidence_state":"OFFLINE-MOCK"}
