@@ -1,0 +1,8 @@
+{
+  "task_id": "invoice-check",
+  "task": "Check a supplied invoice record against a supplied checklist and report each unmet item.",
+  "inputs": ["one invoice record", "one checklist"],
+  "outcome": "Return a checklist report marking each item as met or unmet with the corresponding supplied evidence.",
+  "quality": ["Check every checklist item", "Use only evidence present in the invoice record", "Do not silently skip unmet items"],
+  "failure": ["If the invoice record is missing, state that it is missing", "If a checklist item cannot be evaluated from the record, mark it as unevaluable"]
+}
