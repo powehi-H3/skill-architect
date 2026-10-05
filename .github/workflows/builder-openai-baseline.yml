@@ -1,0 +1,49 @@
+name: Skill Builder V0.2 — OpenAI Baseline
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "OpenAI model identifier"
+        required: false
+        default: "gpt-6-luna"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_MODEL: ${{ inputs.model }}
+      BUILDER_VERSION: ${{ github.sha }}
+      RUN_OUTPUT_DIR: artifacts/builder-baseline
+    steps:
+      - name: Checkout fixed repository revision
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify required inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${OPENAI_API_KEY:-}" || { echo "OPENAI_API_KEY repository secret is missing."; exit 1; }
+          test -f docs/SKILL-BUILDER-V0.2-CANDIDATE.md
+          test -f benchmarks/BUILDER-BENCHMARK-V0.md
+          test -f benchmarks/fixtures/case-g-existing-skill.md
+
+      - name: Run V0.2 black-box baseline
+        run: python3 scripts/run_builder_baseline.py
+
+      - name: Upload immutable execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: builder-v0.2-openai-baseline-${{ github.run_id }}
+          path: artifacts/builder-baseline/
+          if-no-files-found: error
+          retention-days: 30
