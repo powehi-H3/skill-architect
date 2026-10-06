@@ -1,0 +1,178 @@
+{
+  "suite": "h3-skill-offline-regression-v1",
+  "evidence_state": "OFFLINE-STATIC",
+  "llm_executed": false,
+  "semantic_quality_proven": false,
+  "cases": [
+    {
+      "case_id": "H3-01",
+      "type": "H3_PAYLOAD",
+      "title": "Ref2VA reference workflow",
+      "requirements": [
+        "subject_definitions",
+        "summary",
+        "retention_analysis",
+        "detailed_description",
+        "overall_soundscape",
+        "non_diegetic_music"
+      ]
+    },
+    {
+      "case_id": "H3-02",
+      "type": "H3_PAYLOAD",
+      "title": "pure T2VA no-reference",
+      "requirements": [
+        "overall_soundscape",
+        "non_diegetic_music"
+      ]
+    },
+    {
+      "case_id": "H3-03",
+      "type": "H3_PAYLOAD",
+      "title": "OPTIMIZE",
+      "requirements": [
+        "Extract",
+        "Preserve",
+        "Normalize",
+        "Optimize",
+        "Recompile"
+      ]
+    },
+    {
+      "case_id": "H3-04",
+      "type": "H3_PAYLOAD",
+      "title": "PATCH",
+      "requirements": [
+        "TARGET",
+        "CHANGE",
+        "PRESERVE",
+        "DEPENDENCIES"
+      ]
+    },
+    {
+      "case_id": "H3-05",
+      "type": "H3_PAYLOAD",
+      "title": "Reference Repair",
+      "requirements": [
+        "reference"
+      ]
+    },
+    {
+      "case_id": "H3-06",
+      "type": "H3_PAYLOAD",
+      "title": "Camera / POV Repair",
+      "requirements": [
+        "Camera / POV"
+      ]
+    },
+    {
+      "case_id": "H3-07",
+      "type": "H3_PAYLOAD",
+      "title": "Temporal / Phase Repair",
+      "requirements": [
+        "State Ownership",
+        "STATE A0",
+        "STATE B0"
+      ]
+    },
+    {
+      "case_id": "H3-08",
+      "type": "H3_ANALYSIS",
+      "title": "analysis",
+      "requirements": [
+        "Output-Type Gate"
+      ]
+    },
+    {
+      "case_id": "H3-09",
+      "type": "GENERAL_RESPONSE",
+      "title": "general response",
+      "requirements": [
+        "Output-Type Gate"
+      ]
+    },
+    {
+      "case_id": "H3-10",
+      "type": "H3_PAYLOAD",
+      "title": "empty experience library",
+      "requirements": [
+        "Experience Reference Check"
+      ]
+    },
+    {
+      "case_id": "H3-11",
+      "type": "H3_PAYLOAD",
+      "title": "approved experience",
+      "requirements": [
+        "status: APPROVED",
+        "approved_by_user"
+      ]
+    },
+    {
+      "case_id": "H3-12",
+      "type": "H3_PAYLOAD",
+      "title": "candidate/validated experience",
+      "requirements": [
+        "CANDIDATE",
+        "VALIDATED"
+      ]
+    },
+    {
+      "case_id": "H3-13",
+      "type": "H3_PAYLOAD",
+      "title": "scope mismatch",
+      "requirements": [
+        "scope",
+        "applicability",
+        "exclusions"
+      ]
+    },
+    {
+      "case_id": "H3-14",
+      "type": "H3_PAYLOAD",
+      "title": "conflict precedence",
+      "requirements": [
+        "current user intent",
+        "official H3 requirements",
+        "approved Skill rules"
+      ]
+    },
+    {
+      "case_id": "H3-15",
+      "type": "H3_PAYLOAD",
+      "title": "external recompile",
+      "requirements": [
+        "Source Material Ingestion",
+        "Recompile"
+      ]
+    },
+    {
+      "case_id": "H3-16",
+      "type": "H3_PAYLOAD",
+      "title": "unauthorized details",
+      "requirements": [
+        "do not invent",
+        "UNSPECIFIED"
+      ]
+    },
+    {
+      "case_id": "H3-17",
+      "type": "H3_PAYLOAD",
+      "title": "reference role lock",
+      "requirements": [
+        "Reference-role discipline",
+        "roles"
+      ]
+    },
+    {
+      "case_id": "H3-18",
+      "type": "H3_PAYLOAD",
+      "title": "payload purity",
+      "requirements": [
+        "Purity Gate",
+        "internal labels",
+        "engineering vocabulary"
+      ]
+    }
+  ]
+}
