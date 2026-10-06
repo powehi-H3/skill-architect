@@ -2,7 +2,7 @@
   "target_id": "minimax-h3-active-v0.3",
   "repository": "powehi-H3/minimax-h3-NSFW-skill",
   "ref": "main",
-  "skill_path": "PROJECT/ACTIVE-SKILL/h3-nsfw-unified-experimental/SKILL.md",
+  "skill_path": "PROJECT/ACTIVE-SKILL/h3-prompt-skill-current/SKILL.md",
   "active_pointer": "PROJECT/ACTIVE-SKILL/ACTIVE-SKILL.md",
   "declared_version": "V0.3",
   "frozen_semantic_baseline": "V1-5",
