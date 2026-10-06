@@ -8,5 +8,15 @@
   "frozen_semantic_baseline": "V1-5",
   "min_chars": 10000,
   "evidence_policy": "STATIC-AUDIT does not establish LLM execution",
-  "next_runtime_gate": "REAL-LLM"
+  "next_runtime_gate": "REAL-LLM",
+  "known_findings": [
+    {
+      "id": "H3-AUTHORITY-CHAIN-DUPLICATION",
+      "status": "NEEDS_REVISION",
+      "evidence": "AUDITS/H3-V0.3-ADVERSARIAL-SEMANTIC-AUDIT-V1.md",
+      "note": "Multiple normative priority/authority ladders are visible across active and historical sections."
+    }
+  ],
+  "semantic_execution_evidence": "CHATGPT-SEMANTIC-EXECUTION",
+  "real_runtime_status": "NOT_RUN"
 }
