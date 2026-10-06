@@ -5,7 +5,8 @@ on:
   push:
     paths:
       - 'scripts/audit_skill_static_v1.py'
-      - 'targets/h3-v0.3.json'
+      - 'targets/h3-active.json'
+      - 'targets/TARGET-IDENTITY-SCHEMA-V1.md'
       - '.github/workflows/skill-under-test-h3-static-v1.yml'
 
 jobs:
@@ -19,11 +20,11 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .tmp/h3
-          curl -fsSL             "https://raw.githubusercontent.com/powehi-H3/minimax-h3-NSFW-skill/main/PROJECT/ACTIVE-SKILL/h3-nsfw-unified-experimental/SKILL.md"             -o .tmp/h3/SKILL.md
+          curl -fsSL "https://raw.githubusercontent.com/powehi-H3/minimax-h3-NSFW-skill/main/PROJECT/ACTIVE-SKILL/h3-prompt-skill-current/SKILL.md" -o .tmp/h3/SKILL.md
 
       - name: Run static Skill audit
         run: |
-          python3 scripts/audit_skill_static_v1.py             .tmp/h3/SKILL.md             targets/h3-v0.3.json | tee h3-static-audit.json
+          python3 scripts/audit_skill_static_v1.py .tmp/h3/SKILL.md targets/h3-active.json | tee h3-static-audit.json
 
       - name: Run authority consistency heuristic
         run: |
