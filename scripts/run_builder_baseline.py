@@ -19,7 +19,7 @@ from urllib.error import HTTPError, URLError
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = Path(os.environ.get("RUN_OUTPUT_DIR", ROOT / "artifacts" / "builder-baseline"))
-MODEL = os.environ.get("OPENAI_MODEL", "gpt-6-luna")
+MODEL = os.environ.get("OPENAI_MODEL", "").strip()
 ORDER = ["A", "E", "F", "G", "B", "C", "D"]
 BUILDER_PATH = ROOT / "docs" / "SKILL-BUILDER-V0.2-CANDIDATE.md"
 BENCHMARK_PATH = ROOT / "benchmarks" / "BUILDER-BENCHMARK-V0.md"
@@ -35,6 +35,8 @@ def api_call(instructions: str, user_input: str) -> dict:
     key = os.environ.get("OPENAI_API_KEY")
     if not key:
         die("OPENAI_API_KEY is not available. Add it as a repository Actions secret.")
+    if not MODEL:
+        die("OPENAI_MODEL is required. Supply the exact model identifier at workflow dispatch.")
     payload = {
         "model": MODEL,
         "instructions": instructions,
@@ -91,14 +93,36 @@ def parse_cases(markdown: str) -> dict[str, dict[str, str]]:
 
 
 def builder_instructions(builder_spec: str) -> str:
-    return f"""You are the Skill Builder under test. Follow ONLY the Builder specification below plus the case input supplied by the harness.\n\nBUILDER SPECIFICATION (authoritative runtime dependency):\n---\n{builder_spec}\n---\n\nThis is a black-box benchmark. Do not mention the benchmark rubric, expected properties, scoring, evaluator, or hidden test logic. Do not claim that you tested or verified anything unless the case input itself supplies evidence of such execution. Produce the complete candidate Builder result requested by the task."""
+    return f"""You are the Skill Builder under test. Follow ONLY the Builder specification below plus the case input supplied by the harness.
+
+BUILDER SPECIFICATION (authoritative runtime dependency):
+---
+{builder_spec}
+---
+
+This is a black-box benchmark. Do not mention the benchmark rubric, expected properties, scoring, evaluator, or hidden test logic. Do not claim that you tested or verified anything unless the case input itself supplies evidence of such execution. Produce the complete candidate Builder result requested by the task."""
 
 
 def evaluator_instructions() -> str:
-    return """You are an independent evaluator for a Skill Builder benchmark. You did NOT generate the candidate. Evaluate the frozen candidate against the supplied case prompt and expected properties. Do not rewrite the candidate. Distinguish direct observations from inference. Never claim that an event occurred unless it is visible in the supplied evidence.\n\nReturn a concise but complete evaluation with exactly these headings:\n## Verdict\n## Score\n## Observed\n## Failures\n## Root-cause hypothesis\n## Smallest justified Builder change\n## Regression cases\n## Evidence boundary\n\nFor Score, give each applicable dimension 0-2 and a total, but do not let the total replace qualitative severity. Use PASS / NEEDS REVISION / FAIL only as an evaluator disposition, not as proof of execution."""
+    return """You are an independent evaluator for a Skill Builder benchmark. You did NOT generate the candidate. Evaluate the frozen candidate against the supplied case prompt and expected properties. Do not rewrite the candidate. Distinguish direct observations from inference. Never claim that an event occurred unless it is visible in the supplied evidence.
+
+Return a concise but complete evaluation with exactly these headings:
+## Verdict
+## Score
+## Observed
+## Failures
+## Root-cause hypothesis
+## Smallest justified Builder change
+## Regression cases
+## Evidence boundary
+
+For Score, give each applicable dimension 0-2 and a total, but do not let the total replace qualitative severity. Use PASS / NEEDS REVISION / FAIL only as an evaluator disposition, not as proof of execution."""
 
 
 def main() -> None:
+    if not MODEL:
+        die("OPENAI_MODEL is required. Supply the exact model identifier at workflow dispatch.")
+
     OUT.mkdir(parents=True, exist_ok=True)
     builder_spec = BUILDER_PATH.read_text(encoding="utf-8")
     benchmark = BENCHMARK_PATH.read_text(encoding="utf-8")
@@ -136,7 +160,20 @@ def main() -> None:
         frozen_path = run_dir / f"case-{case_id}-candidate.txt"
         frozen_path.write_text(candidate, encoding="utf-8")
 
-        evaluator_input = f"""CASE {case_id} — {case['title']}\n\nCASE PROMPT:\n{case['prompt']}\n\nEXPECTED PROPERTIES:\n{case['expected']}\n\nFROZEN BUILDER CANDIDATE (evaluate exactly as captured; do not edit):\n---\n{candidate}\n---\n\nBenchmark rule: the candidate must be judged on behavior, not on the presence of familiar headings."""
+        evaluator_input = f"""CASE {case_id} — {case['title']}
+
+CASE PROMPT:
+{case['prompt']}
+
+EXPECTED PROPERTIES:
+{case['expected']}
+
+FROZEN BUILDER CANDIDATE (evaluate exactly as captured; do not edit):
+---
+{candidate}
+---
+
+Benchmark rule: the candidate must be judged on behavior, not on the presence of familiar headings."""
         print(f"[Evaluator] Case {case_id} ...", flush=True)
         evaluator_response = api_call(evaluator_instructions(), evaluator_input)
         evaluation = output_text(evaluator_response)
