@@ -1,0 +1,34 @@
+{
+  "skill_id": "minimax-h3-prompt-skill",
+  "display_name": "H3提示词技能 Skill",
+  "declared_version": "V0.3",
+  "source": {
+    "repository": "powehi-H3/minimax-h3-NSFW-skill",
+    "ref": "main",
+    "active_pointer": "PROJECT/ACTIVE-SKILL/ACTIVE-SKILL.md",
+    "skill_path": "PROJECT/ACTIVE-SKILL/h3-prompt-skill-current/SKILL.md",
+    "artifact_filename": "H3提示词技能 Skill V0.3.zip"
+  },
+  "frozen_semantic_baseline": "V1-5",
+  "min_chars": 10000,
+  "evidence_policy": "STATIC-AUDIT does not establish LLM execution",
+  "next_runtime_gate": "REAL-LLM",
+  "real_runtime_status": "NOT_RUN",
+  "known_findings": [
+    {
+      "id": "H3-AUTHORITY-CHAIN-DUPLICATION",
+      "status": "REMEDIATED-DOCUMENT",
+      "evidence": "AUDITS/H3-V0.3-ADVERSARIAL-SEMANTIC-AUDIT-V2.md"
+    },
+    {
+      "id": "H3-CROSS-MODAL-AUTO-COMPLETION",
+      "status": "REMEDIATED-DOCUMENT",
+      "evidence": "AUDITS/H3-V0.3-ADVERSARIAL-SEMANTIC-AUDIT-V2.md"
+    },
+    {
+      "id": "H3-AMBIGUOUS-MOOD-FRICTION",
+      "status": "REMEDIATED-DOCUMENT",
+      "evidence": "AUDITS/H3-V0.3-ADVERSARIAL-SEMANTIC-AUDIT-V2.md"
+    }
+  ]
+}
