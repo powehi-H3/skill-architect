@@ -27,5 +27,41 @@
       "unrelated requirements are preserved",
       "no broad rewrite is introduced without justification"
     ]
+  },
+  {
+    "case_id": "authority-conflict-001",
+    "prompt": "The current user explicitly says to preserve a requirement that conflicts with an older approved prompt and with a convention in a source prompt. Follow the current explicit user instruction and do not import the source convention.",
+    "expected_invariants": [
+      "current explicit user instruction wins",
+      "older prompt does not override current instruction",
+      "source convention is treated as source material, not authority"
+    ]
+  },
+  {
+    "case_id": "anti-invention-preserve-001",
+    "prompt": "The user explicitly provides an unusual concrete visual requirement that is not a documented default. Preserve that requirement exactly while avoiding unrelated invented details.",
+    "expected_invariants": [
+      "explicit unusual requirement survives",
+      "no unrelated invented scene facts",
+      "anti-invention does not erase explicit user content"
+    ]
+  },
+  {
+    "case_id": "phase-anticipation-001",
+    "prompt": "Phase A contains an explicit anticipation cue for a future Phase B action, but the actual Phase B action must remain inactive until the Transition completes. Preserve the anticipation as intentional cross-state dependency without activating Phase B early.",
+    "expected_invariants": [
+      "anticipation can be represented without activating Phase B",
+      "Phase B action begins only after Transition",
+      "cross-state dependency is explicit and intentional"
+    ]
+  },
+  {
+    "case_id": "reference-reuse-001",
+    "prompt": "The same reference labels are mentioned across multiple shots. Preserve their original semantic roles consistently and do not let a later shot silently redefine a label.",
+    "expected_invariants": [
+      "reference roles remain stable",
+      "later shot does not redefine prior label",
+      "identity/environment/audio roles remain separated"
+    ]
   }
 ]
