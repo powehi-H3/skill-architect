@@ -12,9 +12,18 @@
   "known_findings": [
     {
       "id": "H3-AUTHORITY-CHAIN-DUPLICATION",
-      "status": "NEEDS_REVISION",
-      "evidence": "AUDITS/H3-V0.3-ADVERSARIAL-SEMANTIC-AUDIT-V1.md",
-      "note": "Multiple normative priority/authority ladders are visible across active and historical sections."
+      "status": "REMEDIATED-DOCUMENT",
+      "evidence": "AUDITS/H3-V0.3-ADVERSARIAL-SEMANTIC-AUDIT-V2.md"
+    },
+    {
+      "id": "H3-CROSS-MODAL-AUTO-COMPLETION",
+      "status": "REMEDIATED-DOCUMENT",
+      "evidence": "AUDITS/H3-V0.3-ADVERSARIAL-SEMANTIC-AUDIT-V2.md"
+    },
+    {
+      "id": "H3-AMBIGUOUS-MOOD-FRICTION",
+      "status": "REMEDIATED-DOCUMENT",
+      "evidence": "AUDITS/H3-V0.3-ADVERSARIAL-SEMANTIC-AUDIT-V2.md"
     }
   ],
   "semantic_execution_evidence": "CHATGPT-SEMANTIC-EXECUTION",
