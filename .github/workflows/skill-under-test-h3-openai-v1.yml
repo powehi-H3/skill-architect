@@ -1,0 +1,36 @@
+name: Skill Architect — H3 Skill Real Runtime V1
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "Exact OpenAI model identifier"
+        required: true
+        type: string
+
+jobs:
+  run-h3-skill:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Skill Architect
+        uses: actions/checkout@v4
+
+      - name: Fetch H3 Skill under test
+        run: |
+          set -euo pipefail
+          mkdir -p .tmp/h3
+          curl -fsSL "https://raw.githubusercontent.com/powehi-H3/minimax-h3-NSFW-skill/main/PROJECT/ACTIVE-SKILL/h3-nsfw-unified-experimental/SKILL.md" -o .tmp/h3/SKILL.md
+
+      - name: Run real-LLM Skill test
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ inputs.model }}
+        run: |
+          python3 scripts/run_skill_under_test_openai_v1.py             .tmp/h3/SKILL.md             targets/h3-v0.3/cases.json             artifacts/h3-real-runtime
+
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: h3-real-runtime-evidence
+          path: artifacts/h3-real-runtime
