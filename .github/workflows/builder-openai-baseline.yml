@@ -4,9 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       model:
-        description: "OpenAI model identifier"
-        required: false
-        default: "gpt-6-luna"
+        description: "Exact OpenAI model identifier to test"
+        required: true
         type: string
 
 permissions:
@@ -32,6 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           test -n "${OPENAI_API_KEY:-}" || { echo "OPENAI_API_KEY repository secret is missing."; exit 1; }
+          test -n "${OPENAI_MODEL:-}" || { echo "An exact OpenAI model identifier is required."; exit 1; }
           test -f docs/SKILL-BUILDER-V0.2-CANDIDATE.md
           test -f benchmarks/BUILDER-BENCHMARK-V0.md
           test -f benchmarks/fixtures/case-g-existing-skill.md
