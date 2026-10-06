@@ -4,7 +4,7 @@
 
 ## Purpose
 
-This document records the first automated runtime path for executing the Skill Builder V0.2 candidate against the existing V0 benchmark.
+This document records the automated runtime path for executing the Skill Builder V0.2 candidate against the existing V0 benchmark.
 
 The runtime exists to establish real execution evidence. It does not promote V0.2 and it does not replace the project evidence contract.
 
@@ -22,7 +22,9 @@ The key is never stored in the repository and must not be printed into logs. Git
 
 ## Model
 
-The workflow defaults to `gpt-6-luna`, but the model can be supplied at manual dispatch time. The actual model identifier is recorded in run metadata.
+The workflow does **not** assume a default model identifier. The exact model identifier must be supplied explicitly at manual dispatch time and is recorded in run metadata.
+
+This is intentional: an unverified model alias must never be treated as a valid runtime dependency.
 
 ## Execution scope
 
