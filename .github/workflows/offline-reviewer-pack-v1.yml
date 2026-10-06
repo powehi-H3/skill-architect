@@ -1,0 +1,22 @@
+name: Reviewer Blind Pack — Offline Contract
+
+on:
+  push:
+    paths:
+      - "benchmarks/reviewer/**"
+      - "scripts/validate_reviewer_blind_pack.py"
+      - ".github/workflows/offline-reviewer-pack-v1.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate blind Reviewer pack
+        run: python3 scripts/validate_reviewer_blind_pack.py
