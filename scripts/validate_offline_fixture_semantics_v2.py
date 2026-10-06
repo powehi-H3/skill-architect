@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic semantic sanity gate for offline benchmark fixtures."""
+"""Deterministic semantic sanity gate V4 for offline benchmark fixtures."""
 from __future__ import annotations
 import json
 from pathlib import Path
