@@ -33,20 +33,25 @@ def output_text(r:dict)->str:
     return text
 
 def main()->int:
-    if len(sys.argv)!=4:
-        print("usage: run_skill_under_test_openai_v1.py <skill.md> <cases.json> <output-dir>",file=sys.stderr); return 2
-    skill=Path(sys.argv[1]); cases=json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
+    if len(sys.argv)!=5:
+        print("usage: run_skill_under_test_openai_v1.py <skill.md> <cases.json> <output-dir> <manifest.json>",file=sys.stderr); return 2
+    skill=Path(sys.argv[1])
+    cases=json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
+    manifest=json.loads(Path(sys.argv[4]).read_text(encoding="utf-8"))
     model=os.environ.get("OPENAI_MODEL","").strip()
     if not model: print("ERROR: OPENAI_MODEL is required",file=sys.stderr); return 2
     text=skill.read_text(encoding="utf-8")
     out=Path(sys.argv[3]); out.mkdir(parents=True,exist_ok=True)
     run_id=datetime.now(timezone.utc).strftime("SKILL-UT-OPENAI-%Y%m%dT%H%M%SZ")
     run=out/run_id; run.mkdir()
-    (run/"skill.sha256").write_text(hashlib.sha256(text.encode()).hexdigest()+"\n")
+    skill_sha=hashlib.sha256(text.encode()).hexdigest()
+    (run/"skill.sha256").write_text(skill_sha+"\n")
     meta={"run_id":run_id,"evidence_state":"REAL-LLM","llm_executed":True,"model":model,
-          "skill_path":str(skill),"skill_sha256":hashlib.sha256(text.encode()).hexdigest(),
+          "skill_id":manifest.get("skill_id"),"display_name":manifest.get("display_name"),
+          "declared_version":manifest.get("declared_version"),
+          "skill_path":str(skill),"skill_sha256":skill_sha,
           "started_at":datetime.now(timezone.utc).isoformat(),"case_count":len(cases)}
-    (run/"run-metadata.json").write_text(json.dumps(meta,indent=2),encoding="utf-8")
+    (run/"run-metadata.json").write_text(json.dumps(meta,indent=2,ensure_ascii=False),encoding="utf-8")
     evaluator_instructions="""You are an independent evaluator. The candidate output below was produced by a separate model call using a frozen Skill. Judge only the supplied task and output. Do not rewrite it.
 Return:
 ## Verdict
@@ -84,8 +89,9 @@ FROZEN CANDIDATE:
             "expected_invariants":expected
         },indent=2,ensure_ascii=False),encoding="utf-8")
     meta["completed_at"]=datetime.now(timezone.utc).isoformat()
-    (run/"run-metadata.json").write_text(json.dumps(meta,indent=2),encoding="utf-8")
-    print(json.dumps({"status":"PASS","run_id":run_id,"evidence_state":"REAL-LLM","model":model},ensure_ascii=False))
+    (run/"run-metadata.json").write_text(json.dumps(meta,indent=2,ensure_ascii=False),encoding="utf-8")
+    print(json.dumps({"status":"PASS","run_id":run_id,"evidence_state":"REAL-LLM","model":model,
+                      "skill_id":manifest.get("skill_id"),"declared_version":manifest.get("declared_version")},ensure_ascii=False))
     return 0
 
 if __name__=="__main__": raise SystemExit(main())
