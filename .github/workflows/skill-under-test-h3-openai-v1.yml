@@ -19,18 +19,18 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .tmp/h3
-          curl -fsSL "https://raw.githubusercontent.com/powehi-H3/minimax-h3-NSFW-skill/main/PROJECT/ACTIVE-SKILL/h3-nsfw-unified-experimental/SKILL.md" -o .tmp/h3/SKILL.md
+          curl -fsSL "https://raw.githubusercontent.com/powehi-H3/minimax-h3-NSFW-skill/main/PROJECT/ACTIVE-SKILL/h3-prompt-skill-current/SKILL.md" -o .tmp/h3/SKILL.md
 
       - name: Run real-LLM Skill test
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ inputs.model }}
         run: |
-          python3 scripts/run_skill_under_test_openai_v1.py             .tmp/h3/SKILL.md             targets/h3-v0.3/cases.json             artifacts/h3-real-runtime
+          python3 scripts/run_skill_under_test_openai_v1.py .tmp/h3/SKILL.md targets/h3-active/cases.json targets/h3-active/runs targets/h3-active.json
 
       - name: Upload runtime evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: h3-real-runtime-evidence
-          path: artifacts/h3-real-runtime
+          path: targets/h3-active/runs
