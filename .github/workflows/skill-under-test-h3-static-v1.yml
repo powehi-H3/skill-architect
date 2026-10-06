@@ -25,9 +25,15 @@ jobs:
         run: |
           python3 scripts/audit_skill_static_v1.py             .tmp/h3/SKILL.md             targets/h3-v0.3.json | tee h3-static-audit.json
 
+      - name: Run authority consistency heuristic
+        run: |
+          python3 scripts/audit_authority_consistency_v1.py .tmp/h3/SKILL.md | tee h3-authority-audit.json
+
       - name: Upload audit evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: h3-static-audit
-          path: h3-static-audit.json
+          path: |
+            h3-static-audit.json
+            h3-authority-audit.json
